@@ -8,12 +8,12 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/philibus-dev/joke-a-tron.git"
+    "url": "git+https://github.com/philibus-dev/webex-joke-a-tron.git"
   },
   "author": "philibus-dev",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/philibus-dev/joke-a-tron/issues"
+    "url": "https://github.com/philibus-dev/webex-joke-a-tron/issues"
   },
-  "homepage": "https://github.com/philibus-dev/joke-a-tron#readme"
+  "homepage": "https://github.com/philibus-dev/webex-joke-a-tron#readme"
 }
