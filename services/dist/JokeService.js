@@ -51,27 +51,55 @@ const jokeServices = [
         }
     }
 ];
+function isBadJoke(joke) {
+    const badWords = ['midget', 'chinese'];
+    const hasBadWord = badWords.some(badWord => joke.toLowerCase().includes(badWord));
+    console.log('hasBadWord: ', hasBadWord);
+    return hasBadWord;
+}
+function requestJoke(serviceIndex) {
+    return __awaiter(this, void 0, void 0, function* () {
+        return new Promise((resolve, reject) => {
+            const req = https.request(jokeServices[serviceIndex].options, (res) => {
+                let body = '';
+                res.on('data', (chunk) => {
+                    body += chunk;
+                });
+                res.on('end', () => {
+                    const bodyJSON = JSON.parse(body);
+                    const joke = jokeServices[serviceIndex].process(bodyJSON);
+                    resolve(joke);
+                });
+            });
+            req.on('error', (e) => {
+                reject(e);
+            });
+            req.end();
+        });
+    });
+}
 exports.JokeService = {
     getRandomJoke() {
         return __awaiter(this, void 0, void 0, function* () {
             const jokeServiceIndex = 0;
-            return new Promise((resolve, reject) => {
-                const req = https.request(jokeServices[jokeServiceIndex].options, (res) => {
-                    let body = '';
-                    res.on('data', (chunk) => {
-                        body += chunk;
-                    });
-                    res.on('end', () => {
-                        const bodyJSON = JSON.parse(body);
-                        const joke = jokeServices[jokeServiceIndex].process(bodyJSON);
-                        resolve(joke);
-                    });
-                });
-                req.on('error', (e) => {
-                    reject(e);
-                });
-                req.end();
-            });
+            const maxTries = 3;
+            let currTry = 0;
+            let success = false;
+            let joke = '';
+            while (!success && currTry < maxTries) {
+                joke = yield requestJoke(jokeServiceIndex);
+                if (joke instanceof Error) {
+                    currTry++;
+                    continue;
+                }
+                if (isBadJoke(joke)) {
+                    joke = 'Sorry, this joke was not appropriate.';
+                    currTry++;
+                    continue;
+                }
+                success = true;
+            }
+            return joke;
         });
     }
 };

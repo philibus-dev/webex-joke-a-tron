@@ -21,35 +21,69 @@ const jokeServices: JokeService[] = [
     }
 ];
 
-exports.JokeService = {
+function isBadJoke(joke: string): boolean {
+    const badWords: string[] = ['midget', 'chinese'];
+    const hasBadWord: boolean = badWords.some(badWord => joke.toLowerCase().includes(badWord));
 
-    async getRandomJoke(): Promise<string> {
-        const jokeServiceIndex: number = 0;
+    console.log('hasBadWord: ', hasBadWord);
 
-        return new Promise((resolve, reject) => {
-            const req = https.request(jokeServices[jokeServiceIndex].options, (res) => {
-                let body: string = '';
+    return hasBadWord;
+}
 
-                res.on('data', (chunk) => {
-                    body += chunk;
-                });
+async function requestJoke(serviceIndex: number): Promise<string | Error> {
+    return new Promise((resolve, reject) => {
+        const req = https.request(jokeServices[serviceIndex].options, (res) => {
+            let body: string = '';
 
-                res.on('end', () => {
-                    const bodyJSON = JSON.parse(body);
-                    const joke = jokeServices[jokeServiceIndex].process(bodyJSON);
-
-                    resolve(joke);
-                });
-
+            res.on('data', (chunk) => {
+                body += chunk;
             });
 
-            req.on('error', (e) => {
-                reject(e);
+            res.on('end', () => {
+                const bodyJSON = JSON.parse(body);
+                const joke = jokeServices[serviceIndex].process(bodyJSON);
+
+                resolve(joke);
             });
 
-            req.end();
         });
 
+        req.on('error', (e: Error) => {
+            reject(e);
+        });
+
+        req.end();
+    });
+}
+
+exports.JokeService = {
+
+    async getRandomJoke() {
+        const jokeServiceIndex: number = 0;
+        const maxTries = 3;
+
+        let currTry = 0;
+        let success = false;
+        let joke: string | Error = '';
+
+        while(!success && currTry < maxTries) {
+            joke = await requestJoke(jokeServiceIndex);
+
+            if (joke instanceof Error) {
+                currTry++;
+                continue;
+            }
+
+            if (isBadJoke(joke)) {
+                joke = 'Sorry, this joke was not appropriate.';
+                currTry++;
+                continue;
+            }
+
+            success = true;
+        }
+
+        return joke;
     }
 
 } 
