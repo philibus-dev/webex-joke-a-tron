@@ -49,10 +49,24 @@ const jokeServices = [
         process: (body) => {
             return body[0].joke;
         }
+    },
+    {
+        options: {
+            host: 'v2.jokeapi.dev',
+            path: '/joke/Programming?type=single',
+            method: 'GET',
+            headers: {
+                'Accept': 'Accept: application/json',
+                'User-Agent': 'FunWebexBot'
+            }
+        },
+        process: (body) => {
+            return body.joke;
+        }
     }
 ];
 function isBadJoke(joke) {
-    const badWords = ['midget', 'chinese'];
+    const badWords = ['midget', 'chinese', 'alzheimer'];
     const hasBadWord = badWords.some(badWord => joke.toLowerCase().includes(badWord));
     console.log('hasBadWord: ', hasBadWord);
     return hasBadWord;
@@ -81,8 +95,9 @@ function requestJoke(serviceIndex) {
 exports.JokeService = {
     getRandomJoke() {
         return __awaiter(this, void 0, void 0, function* () {
-            const jokeServiceIndex = 0;
+            const jokeServiceIndex = Math.floor(Math.random() * jokeServices.length);
             const maxTries = 3;
+            console.log('jokeServiceIndex: ', jokeServiceIndex);
             let currTry = 0;
             let success = false;
             let joke = '';
