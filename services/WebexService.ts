@@ -1,11 +1,23 @@
-const https = require('https');
+import * as https from 'https'
+
+interface WebExPostOptions {
+    host: string;
+    method: string;
+    port: number;
+    path: string;
+    headers: {
+        Authorization: string;
+        'Content-Type': string;
+        'Content-Length': number;
+    }
+}
 
 exports.WebexService = {
 
-    sendMessage(roomId, markdown) {
+    sendMessage(roomId: number, markdown: string): Promise<String | Error> {
         const postData = JSON.stringify({markdown, roomId});
 
-        const postOptions = {
+        const postOptions: WebExPostOptions = {
             host: 'webexapis.com',
             method: 'POST',
             port: 443,
@@ -20,9 +32,9 @@ exports.WebexService = {
         return new Promise((resolve, reject) => {
 
             const reqPost = https.request(postOptions, (res) => {
-                let postBody;
+                let postBody: string = '';
 
-                res.on('data', (data) => {
+                res.on('data', (data: string) => {
                     postBody += data;
                 });
 
@@ -30,7 +42,7 @@ exports.WebexService = {
                     resolve(postBody);
                 });
 
-                res.on('error', (err) => {
+                res.on('error', (err: Error) => {
                     reject(err);
                 });
             });

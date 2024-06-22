@@ -1,7 +1,7 @@
-const greetingService = require('./services/GreetingService').GreetingService,
-    jokeService = require('./services/JokeService').JokeService,
-    roomService = require('./services/RoomService').RoomService,
-    webexService = require('./services/WebexService').WebexService;
+const greetingService = require('./services/dist/GreetingService').GreetingService,
+    jokeService = require('./services/dist/JokeService').JokeService,
+    roomService = require('./services/dist/RoomService').RoomService,
+    webexService = require('./services/dist/WebexService').WebexService;
 
 const doPostRequest = async () => {
     const greeting = greetingService.getRandomGreeting();

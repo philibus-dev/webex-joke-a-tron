@@ -1,8 +1,9 @@
-const https = require('https')
+import * as https from 'https'
+import {JokeService} from "./models/Joke";
 
 require('dotenv').config()
 
-const jokeServices = [
+const jokeServices: JokeService[] = [
     {
         options: {
             host: 'api.api-ninjas.com',
@@ -14,7 +15,7 @@ const jokeServices = [
                 'X-Api-Key': process.env.JOKE_API_SECRET
             }
         },
-        process: (body) => {
+        process: (body: any) => {
             return body[0].joke;
         }
     }
@@ -22,12 +23,12 @@ const jokeServices = [
 
 exports.JokeService = {
 
-    async getRandomJoke() {
-        const jokeServiceIndex = 0;
+    async getRandomJoke(): Promise<string> {
+        const jokeServiceIndex: number = 0;
 
         return new Promise((resolve, reject) => {
             const req = https.request(jokeServices[jokeServiceIndex].options, (res) => {
-                let body = '';
+                let body: string = '';
 
                 res.on('data', (chunk) => {
                     body += chunk;

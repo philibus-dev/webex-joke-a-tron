@@ -1,3 +1,4 @@
+"use strict";
 const greetings = [
     "Hey, guess what? It's me again!",
     "Good morning! HUMOUR TIME NOW!",
@@ -31,12 +32,9 @@ const greetings = [
     "Prepare for annoyance! A joke is about to ruin your day!",
     "Prepare for irritation! In 3....2....1..."
 ];
-
 exports.GreetingService = {
-
     getRandomGreeting() {
         const selIdx = Math.floor(Math.random() * greetings.length);
         return greetings[selIdx];
     }
-
-}
+};
