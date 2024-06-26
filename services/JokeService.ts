@@ -37,11 +37,10 @@ const jokeServices: JokeService[] = [
 
 function isBadJoke(joke: string): boolean {
     const badWords: string[] = ['midget', 'chinese', 'alzheimer'];
-    const hasBadWord: boolean = badWords.some(badWord => joke.toLowerCase().includes(badWord));
 
-    console.log('hasBadWord: ', hasBadWord);
-
-    return hasBadWord;
+    return [
+      'midget', 'chinese', 'alzheimer'
+    ].some(badWord => joke.toLowerCase().includes(badWord));
 }
 
 async function requestJoke(serviceIndex: number): Promise<string | Error> {
@@ -75,8 +74,6 @@ exports.JokeService = {
     async getRandomJoke() {
         const jokeServiceIndex: number = Math.floor(Math.random() * jokeServices.length);
         const maxTries = 3;
-
-        console.log('jokeServiceIndex: ', jokeServiceIndex);
 
         let currTry = 0;
         let success = false;
